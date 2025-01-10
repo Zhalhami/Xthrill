@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function Movies() {
+function Movies({searchItems}) {
   const [movies, setMovies] = useState([]);
   const [videoKey, setVideoKey] = useState(null); // For storing the YouTube video key
   const API_KEY = "8b79f6c4a70048f99dde56e4e696b0ae"; // Replace with your TMDb API key
@@ -30,59 +30,69 @@ function Movies() {
         }
       })
       .catch((error) => console.error("Error fetching video:", error));
+
+      
   };
   
+  const filteredMovies = movies.filter((movie) =>
+    movie.title.toLowerCase().includes(searchItems.toLowerCase())
+  );
+
 
   return (
-    <div className="movies">
-    <h2 style={{ textAlign: "center" }}>Popular Movies</h2>
-    <ul>
-        {movies.map((movie) => (
-            <li className="eachmovie" key={movie.id}>
+      <div className="movies">
+        <h2 style={{ textAlign: "center" }}>Popular Movies</h2>
+        {filteredMovies.length > 0 ? (
+          <ul>
+            {filteredMovies.map((movie) => (
+              <li className="eachmovie" key={movie.id}>
                 {playingMovieId === movie.id ? (
-                    <iframe
-                        width="280"
-                        height="420"
-                        src={`https://www.youtube.com/embed/${videoKey}`}
-                        title="YouTube video player"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                    ></iframe>
+                  <iframe
+                    width="280"
+                    height="420"
+                    src={`https://www.youtube.com/embed/${videoKey}`}
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
                 ) : (
-                    <div style={{ position: "relative" }}>
-                        <img
-                            src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-                            alt={movie.title}
-                            style={{ width: "100%" }}
-                        />
-                        <button
-                            onClick={() => handlePlayVideo(movie.id)}
-                            style={{
-                                position: "absolute",
-                                top: "50%",
-                                left: "50%",
-                                transform: "translate(-50%, -50%)",
-                                backgroundColor: "rgba(0, 0, 0, 0.7)",
-                                color: "#fff",
-                                border: "none",
-                                borderRadius: "50%",
-                                width: "50px",
-                                height: "50px",
-                                cursor: "pointer",
-                            }}
-                        >
-                            ▶
-                        </button>
-                    </div>
+                  <div style={{ position: "relative" }}>
+                    <img
+                      src={`${IMAGE_BASE_URL}${movie.poster_path}`}
+                      alt={movie.title}
+                      style={{ width: "100%" }}
+                    />
+                    <button
+                      onClick={() => handlePlayVideo(movie.id)}
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        backgroundColor: "rgba(0, 0, 0, 0.7)",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "50px",
+                        height: "50px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      ▶
+                    </button>
+                  </div>
                 )}
                 <h3>{movie.title}</h3>
-            </li>
-        ))}
-    </ul>
-</div>
-
-  );
-}
-
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p style={{ textAlign: "center", color: "gray", marginTop: "20px" }}>
+            No results found.
+          </p>
+        )}
+      </div>
+    );
+  }
 export default Movies;
